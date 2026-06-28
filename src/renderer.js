@@ -257,14 +257,16 @@ async function runScan() {
     'Design Tool': '🎨', 'IoT': '🔌', 'Screen Recorder': '🎬',
     'Browser': '🌐', 'Game Launcher': '🎮', 'Media': '🎵',
     'Suspicious': '⚠️', 'Windows': '🪟', 'GPU Driver': '🖥️',
-    'Antivirus': '🛡️', 'Streaming': '📡', 'Development': '💻', 'Device Sync': '📱'
+    'Antivirus': '🛡️', 'Streaming': '📡', 'Development': '💻', 'Device Sync': '📱', 'Unknown': '❓'
   };
 
   grid.innerHTML = procs.map((p, i) => {
     const icon    = catIcons[p.category] || '⚙️';
     const killed  = state?.killedProcesses?.includes(p.exe);
     const actionBtn = !p.safe_to_kill
-      ? `<span class="btn-protected">⚠️ Protected</span>`
+      ? (p.category === 'Unknown' 
+          ? `<button class="btn-secondary" onclick="reportProcess('${p.exe}', ${p.memMB}, this)">📢 Report</button>`
+          : `<span class="btn-protected">⚠️ Protected</span>`)
       : killed
         ? `<span class="btn-killed">✓ Killed</span>`
         : `<button class="btn-kill" id="kill-${i}" onclick="killOne(${i}, '${p.exe}', '${p.name.replace(/'/g, "\\'")}', this)">💀 Kill</button>`;
@@ -307,6 +309,27 @@ async function killAllBloat() {
     document.querySelectorAll('.proc-card').forEach(c => c.classList.add('killed'));
     document.querySelectorAll('.btn-kill').forEach(b => { b.outerHTML = '<span class="btn-killed">✓ Killed</span>'; });
   }
+}
+
+// ── Community Reporting (Phase 3) ─────────────────────────────
+async function reportProcess(exe, memMB, btn) {
+  setLoading(btn, true);
+  
+  const title = encodeURIComponent(`Unknown Process: ${exe}`);
+  const body = encodeURIComponent(`NexTune detected an unknown heavy process running on my system.
+
+**Process details:**
+- Executable: \`${exe}\`
+- RAM Usage: ~${memMB} MB
+
+Can we investigate if this is safe to kill or bloatware?`);
+
+  const url = `https://github.com/anandX1/nextune/issues/new?title=${title}&body=${body}`;
+  
+  await NexTune.openExternal(url);
+  setLoading(btn, false);
+  btn.outerHTML = `<span class="btn-killed" style="color:var(--cyan);">✓ Reported</span>`;
+  toast(`Thank you! Issue opened in browser.`, 'success', 5000);
 }
 
 // ── Startup Manager ───────────────────────────────────────────

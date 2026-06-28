@@ -182,17 +182,26 @@ fn scan_processes(db: State<DatabaseWrapper>) -> Vec<ProcessInfo> {
     let db_lock = db.0.lock().unwrap();
     let mut results = Vec::new();
     let mut seen = std::collections::HashSet::new();
+    
+    const CORE_WINDOWS: &[&str] = &[
+        "svchost.exe", "explorer.exe", "csrss.exe", "smss.exe", "wininit.exe", 
+        "services.exe", "lsass.exe", "winlogon.exe", "fontdrvhost.exe", "dwm.exe",
+        "spoolsv.exe", "sihost.exe", "taskhostw.exe", "RuntimeBroker.exe", "SearchIndexer.exe",
+        "SecurityHealthService.exe", "MsMpEng.exe", "NisSrv.exe", "conhost.exe", "WmiPrvSE.exe",
+        "System", "Registry", "Memory Compression", "TextInputHost.exe", "ctfmon.exe"
+    ];
 
-    for (_pid, process) in sys.processes() {
+    for (pid, process) in sys.processes() {
         let exe = process.name().to_string_lossy().to_string();
         
-        if seen.contains(&exe) {
+        if seen.contains(&exe) || CORE_WINDOWS.contains(&exe.as_str()) {
             continue;
         }
 
+        let mem_mb = process.memory() / 1024 / 1024;
+
         if let Some(entry) = db_lock.get(&exe) {
             seen.insert(exe.clone());
-            let mem_mb = process.memory() / 1024 / 1024;
             
             results.push(ProcessInfo {
                 exe: exe.clone(),
@@ -204,6 +213,20 @@ fn scan_processes(db: State<DatabaseWrapper>) -> Vec<ProcessInfo> {
                 impact: entry.impact.clone(),
                 safe_to_kill: entry.safe_to_kill,
                 category: entry.category.clone(),
+            });
+        } else if mem_mb > 150 {
+            // PHASE 3: Unknown Heavy Process Detection
+            seen.insert(exe.clone());
+            results.push(ProcessInfo {
+                exe: exe.clone(),
+                name: exe.clone(),
+                vendor: "Unknown".to_string(),
+                memMB: mem_mb,
+                ramRange: "".to_string(),
+                description: "Heavy background process not in our database. You can report it to the community.".to_string(),
+                impact: "Unknown".to_string(),
+                safe_to_kill: false, // Too risky to kill unknown apps
+                category: "Unknown".to_string(),
             });
         }
     }
