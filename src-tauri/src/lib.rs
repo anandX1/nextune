@@ -1,10 +1,12 @@
 use std::sync::Mutex;
+use std::collections::HashMap;
 use tauri::{AppHandle, Manager, State, Emitter};
 use sysinfo::System;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tauri_plugin_opener::OpenerExt;
 
+// 1. Data Structures
 #[derive(Serialize, Clone)]
 struct SystemStats {
     ramTotal: f32,
@@ -19,6 +21,7 @@ struct SystemStats {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+#[allow(non_snake_case)]
 struct AppSettings {
     autoCleanInterval: u32,
     protectedApps: Vec<String>,
@@ -44,6 +47,7 @@ impl Default for AppSettings {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+#[allow(non_snake_case)]
 struct AppStateStruct {
     streamMode: bool,
     autobotInstalled: bool,
@@ -62,11 +66,39 @@ impl Default for AppStateStruct {
     }
 }
 
-// State wrappers
+// 2. Database Models
+#[derive(Serialize, Deserialize, Clone)]
+struct BloatEntry {
+    name: String,
+    vendor: Option<String>,
+    category: String,
+    impact: String,
+    #[allow(non_snake_case)]
+    ramRange: Option<String>,
+    description: String,
+    safe_to_kill: bool,
+}
+
+#[derive(Serialize, Clone)]
+#[allow(non_snake_case)]
+struct ProcessInfo {
+    exe: String,
+    name: String,
+    vendor: String,
+    memMB: u64,
+    ramRange: String,
+    description: String,
+    impact: String,
+    safe_to_kill: bool,
+    category: String,
+}
+
+// 3. Wrappers
 struct AppStateWrapper(Mutex<AppStateStruct>);
 struct SettingsWrapper(Mutex<AppSettings>);
+struct DatabaseWrapper(Mutex<HashMap<String, BloatEntry>>);
 
-// Dummy history and version
+// 4. API Endpoints
 #[tauri::command]
 fn get_history() -> Vec<String> { vec![] }
 #[tauri::command]
@@ -89,7 +121,6 @@ fn save_settings(s: AppSettings, settings: State<SettingsWrapper>) -> bool {
     true
 }
 
-// Window commands
 #[tauri::command]
 fn window_minimize(app: AppHandle) {
     if let Some(win) = app.get_webview_window("main") {
@@ -112,17 +143,114 @@ fn window_close(app: AppHandle) {
 }
 
 #[tauri::command]
-fn scan_processes() -> Vec<String> { vec![] }
+fn scan_processes(db: State<DatabaseWrapper>) -> Vec<ProcessInfo> {
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    
+    let db_lock = db.0.lock().unwrap();
+    let mut results = Vec::new();
+    let mut seen = std::collections::HashSet::new();
+
+    for (_pid, process) in sys.processes() {
+        let exe = process.name().to_string_lossy().to_string();
+        
+        if seen.contains(&exe) {
+            continue;
+        }
+
+        if let Some(entry) = db_lock.get(&exe) {
+            seen.insert(exe.clone());
+            let mem_mb = process.memory() / 1024 / 1024;
+            
+            results.push(ProcessInfo {
+                exe: exe.clone(),
+                name: entry.name.clone(),
+                vendor: entry.vendor.clone().unwrap_or_default(),
+                memMB: mem_mb,
+                ramRange: entry.ramRange.clone().unwrap_or_default(),
+                description: entry.description.clone(),
+                impact: entry.impact.clone(),
+                safe_to_kill: entry.safe_to_kill,
+                category: entry.category.clone(),
+            });
+        }
+    }
+    
+    results
+}
+
+#[tauri::command]
+fn kill_process(data: serde_json::Value, state: State<AppStateWrapper>) -> serde_json::Value {
+    let target_exe = data.get("exe").and_then(|v| v.as_str()).unwrap_or("");
+    
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    
+    let mut freed_bytes: u64 = 0;
+    let mut killed = false;
+    
+    for (_pid, process) in sys.processes() {
+        let exe = process.name().to_string_lossy().to_string();
+        if exe == target_exe {
+            freed_bytes += process.memory();
+            process.kill();
+            killed = true;
+        }
+    }
+    
+    if killed {
+        let mut st = state.0.lock().unwrap();
+        st.cleanedBytes += freed_bytes;
+        st.killedProcesses.push(target_exe.to_string());
+        serde_json::json!({ "ok": true, "freedMB": freed_bytes / 1024 / 1024 })
+    } else {
+        serde_json::json!({ "ok": false })
+    }
+}
+
+#[tauri::command]
+fn kill_all_bloat(db: State<DatabaseWrapper>, settings: State<SettingsWrapper>, state: State<AppStateWrapper>) -> serde_json::Value {
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    
+    let db_lock = db.0.lock().unwrap();
+    let safe_mode = settings.0.lock().unwrap().safeMode;
+    
+    let mut freed_bytes: u64 = 0;
+    let mut count = 0;
+    
+    for (_pid, process) in sys.processes() {
+        let exe = process.name().to_string_lossy().to_string();
+        
+        if let Some(entry) = db_lock.get(&exe) {
+            // Check Safe Mode conditions
+            if safe_mode && (entry.category == "Communication" || entry.category == "Media") {
+                continue; // Skip killing Discord, Spotify, Teams, etc. in safe mode
+            }
+            
+            if entry.safe_to_kill {
+                freed_bytes += process.memory();
+                if process.kill() {
+                    count += 1;
+                    state.0.lock().unwrap().killedProcesses.push(exe.clone());
+                }
+            }
+        }
+    }
+    
+    if count > 0 {
+        state.0.lock().unwrap().cleanedBytes += freed_bytes;
+    }
+    
+    serde_json::json!({ "ok": true, "count": count, "freedMB": freed_bytes / 1024 / 1024 })
+}
+
 #[tauri::command]
 fn get_startup_items() -> Vec<String> { vec![] }
 #[tauri::command]
 fn scan_junk() -> serde_json::Value { serde_json::json!({ "items": [], "totalBytes": 0, "totalMB": 0 }) }
 #[tauri::command]
 fn get_services() -> String { "".into() }
-#[tauri::command]
-fn kill_process(_data: serde_json::Value) -> serde_json::Value { serde_json::json!({ "ok": true }) }
-#[tauri::command]
-fn kill_all_bloat() -> serde_json::Value { serde_json::json!({ "ok": true, "count": 0 }) }
 #[tauri::command]
 fn toggle_startup(_data: serde_json::Value) -> serde_json::Value { serde_json::json!({ "ok": true }) }
 #[tauri::command]
@@ -178,12 +306,43 @@ fn start_monitoring(app: AppHandle) {
     });
 }
 
+fn fetch_database(app: AppHandle) {
+    std::thread::spawn(move || {
+        let db_url = "https://raw.githubusercontent.com/anandX1/nextune/master/data/bloat-database.json";
+        
+        let mut parsed_db: Option<HashMap<String, BloatEntry>> = None;
+        
+        if let Ok(resp) = reqwest::blocking::get(db_url) {
+            if let Ok(json) = resp.json::<HashMap<String, BloatEntry>>() {
+                println!("Successfully fetched dynamic database from GitHub!");
+                parsed_db = Some(json);
+            }
+        }
+        
+        if parsed_db.is_none() {
+            println!("Falling back to bundled bloat-database.json");
+            if let Ok(content) = std::fs::read_to_string("data/bloat-database.json") {
+                if let Ok(json) = serde_json::from_str::<HashMap<String, BloatEntry>>(&content) {
+                    parsed_db = Some(json);
+                }
+            }
+        }
+        
+        if let Some(db) = parsed_db {
+            let state: State<DatabaseWrapper> = app.state();
+            let mut lock = state.0.lock().unwrap();
+            *lock = db;
+        }
+    });
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(AppStateWrapper(Mutex::new(AppStateStruct::default())))
         .manage(SettingsWrapper(Mutex::new(AppSettings::default())))
+        .manage(DatabaseWrapper(Mutex::new(HashMap::new())))
         .invoke_handler(tauri::generate_handler![
             get_state, get_settings, save_settings, get_history, get_version,
             window_minimize, window_maximize, window_close,
@@ -194,6 +353,7 @@ pub fn run() {
         ])
         .setup(|app| {
             start_monitoring(app.handle().clone());
+            fetch_database(app.handle().clone());
             Ok(())
         })
         .run(tauri::generate_context!())
