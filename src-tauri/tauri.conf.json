@@ -28,6 +28,15 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "publisher": "Anand",
+    "windows": {
+      "nsis": {
+        "license": "EULA.txt",
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "installMode": "currentUser"
+      }
+    }
   }
 }

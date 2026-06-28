@@ -1,0 +1,11 @@
+NexTune End-User License Agreement (EULA)  
+  
+By installing NexTune, you agree to the following terms:  
+  
+1. NO TELEMETRY OR DATA COLLECTION: NexTune operates 100%% locally. No personal data, telemetry, or hardware identifiers are ever collected, transmitted, or stored outside of your machine.  
+  
+2. NO WARRANTY: This software is provided " AS "IS, without warranty of any kind. The authors shall not be held liable for any damages, data loss, or system instability resulting from the use of this software.  
+  
+3. SYSTEM MODIFICATIONS: NexTune alters Windows processes, services, and startup items to improve performance. While these actions are designed to be safe, you proceed at your own risk.  
+  
+Copyright (c) 2024-2025 Anand. All rights reserved. 
