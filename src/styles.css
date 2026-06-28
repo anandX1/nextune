@@ -649,3 +649,8 @@ body {
   vertical-align: middle;
 }
 button:disabled { opacity: 0.65; cursor: not-allowed; }
+  
+.ram-graph-section { margin-top: 30px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 20px; }  
+.ram-graph-section h2 { margin: 0 0 15px 0; font-size: 14px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 1px; }  
+.graph-container { width: 100%; height: 150px; position: relative; }  
+#ramTimelineGraph { width: 100%; height: 100%; display: block; } 

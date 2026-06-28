@@ -10,6 +10,7 @@ window.NexTune = {
   minimize: () => invoke('window_minimize'),
   maximize: () => invoke('window_maximize'),
   close: () => invoke('window_close'),
+  getRamHistory: () => invoke('get_ram_history'),
   scanProcesses: () => invoke('scan_processes'),
   killProcess: (data) => invoke('kill_process', data),
   killAll: () => invoke('kill_all_bloat'),
@@ -73,6 +74,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   loadStartupItems();
   loadHistory();
   renderServices();
+  
+  // Render RAM Graph
+  renderRamGraph();
+  
+  // Update graph periodically (every 60s)
+  setInterval(renderRamGraph, 60000);
 
   // Live stats listener
   NexTune.on('stats-update', updateStats);
@@ -117,6 +124,77 @@ function updateStats(s) {
   // Disk
   document.getElementById('diskRead').textContent = `${s.diskRead}`;
   document.getElementById('diskDetail').textContent = `R: ${s.diskRead} | W: ${s.diskWrite} MB/s`;
+}
+
+// ── RAM Timeline Graph ────────────────────────────────────────
+async function renderRamGraph() {
+  const canvas = document.getElementById('ramTimelineGraph');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  // Fix blurriness on high-DPI displays
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  
+  const width = rect.width;
+  const height = rect.height;
+  
+  const history = await NexTune.getRamHistory();
+  
+  ctx.clearRect(0, 0, width, height);
+  if (!history || history.length < 2) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.font = '12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Gathering RAM usage data...', width / 2, height / 2);
+    return;
+  }
+  
+  // Determine min/max for Y axis mapping
+  const padding = 10;
+  const graphWidth = width;
+  const graphHeight = height - padding * 2;
+  
+  const maxRam = Math.max(...history.map(d => d.ram_used_mb)) * 1.1; // 10% headroom
+  const minRam = Math.max(0, Math.min(...history.map(d => d.ram_used_mb)) * 0.9);
+  
+  const range = maxRam - minRam || 1;
+  
+  const xStep = graphWidth / (history.length - 1);
+  
+  // Draw Area Fill
+  ctx.beginPath();
+  ctx.moveTo(0, height);
+  history.forEach((point, i) => {
+    const x = i * xStep;
+    const y = padding + graphHeight - ((point.ram_used_mb - minRam) / range) * graphHeight;
+    ctx.lineTo(x, y);
+  });
+  ctx.lineTo(width, height);
+  ctx.closePath();
+  
+  const gradient = ctx.createLinearGradient(0, 0, 0, height);
+  gradient.addColorStop(0, 'rgba(6, 182, 212, 0.3)'); // Cyan top
+  gradient.addColorStop(1, 'rgba(6, 182, 212, 0.0)'); // Transparent bottom
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  
+  // Draw Line
+  ctx.beginPath();
+  history.forEach((point, i) => {
+    const x = i * xStep;
+    const y = padding + graphHeight - ((point.ram_used_mb - minRam) / range) * graphHeight;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#06b6d4'; // Cyan
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
 }
 
 function setGauge(id, pct, color) {
