@@ -28,6 +28,19 @@ Unlike older optimizers that randomly kill processes and crash your apps, NexTun
 
 ---
 
+## 📥 Download & Installation
+
+The easiest way to get NexTune running on your PC is to download the pre-compiled Windows installer.
+
+1. Go to the [Releases Page](https://github.com/anandX1/nextune/releases/latest) (or click on **Releases** on the right side of this page).
+2. Download the latest **`NexTune_..._x64_en-US.msi`** file under the Assets section.
+3. Double-click the downloaded `.msi` file to launch the setup wizard.
+4. Follow the prompts to install NexTune.
+
+> **Note:** Since NexTune is a powerful optimization tool that modifies system processes, Windows SmartScreen may show a warning on the first run. You can safely click "More info" -> "Run anyway".
+
+---
+
 ## 💻 For Developers: The Technical Architecture
 NexTune is built for maximum speed and minimal overhead.
 
