@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexTune — Intelligent PC Performance</title>
+  <meta name="description" content="NexTune — Smart, lightweight, trustworthy PC optimizer. Real-time monitoring, smart bloat detection, deep cleaner." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ══ TITLEBAR (frameless window controls) ══ -->
+  <div class="titlebar" id="titlebar">
+    <div class="titlebar-left">
+      <div class="tb-logo">
+        <div class="tb-icon">⚡</div>
+        <span class="tb-name">NexTune</span>
+        <span class="tb-version" id="appVersion">v1.0.0</span>
+      </div>
+    </div>
+    <div class="titlebar-drag"></div>
+    <div class="titlebar-right">
+      <div class="update-badge" id="updateBadge" style="display:none;">
+        🆕 Update Available
+        <button onclick="NexTune.installUpdate()">Install</button>
+      </div>
+      <button class="tb-btn" id="minimizeBtn" title="Minimize">─</button>
+      <button class="tb-btn" id="maximizeBtn" title="Maximize">□</button>
+      <button class="tb-btn tb-close" id="closeBtn" title="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- ══ APP LAYOUT ══ -->
+  <div class="app-layout">
+
+    <!-- ── SIDEBAR NAV ── -->
+    <nav class="sidebar">
+      <div class="sidebar-section">
+        <div class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard', this)">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </div>
+        <div class="nav-item" data-tab="scan" onclick="switchTab('scan', this)">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Smart Scan</span>
+          <span class="nav-badge" id="scanBadge" style="display:none;"></span>
+        </div>
+        <div class="nav-item" data-tab="startup" onclick="switchTab('startup', this)">
+          <span class="nav-icon">🚀</span>
+          <span class="nav-label">Startup</span>
+        </div>
+        <div class="nav-item" data-tab="cleaner" onclick="switchTab('cleaner', this)">
+          <span class="nav-icon">🧹</span>
+          <span class="nav-label">Deep Cleaner</span>
+        </div>
+        <div class="nav-item" data-tab="services" onclick="switchTab('services', this)">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Services</span>
+        </div>
+        <div class="nav-item" data-tab="stream" onclick="switchTab('stream', this)">
+          <span class="nav-icon">🎮</span>
+          <span class="nav-label">Stream Mode</span>
+        </div>
+        <div class="nav-item" data-tab="history" onclick="switchTab('history', this)">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">History & Undo</span>
+        </div>
+        <div class="nav-item" data-tab="settings" onclick="switchTab('settings', this)">
+          <span class="nav-icon">🔧</span>
+          <span class="nav-label">Settings</span>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="stream-pill" id="streamPill" style="display:none;">
+          <span class="stream-dot"></span> LIVE
+        </div>
+        <div class="sidebar-meta">
+          <span>By Anand</span>
+          <span>·</span>
+          <span class="sidebar-link" onclick="NexTune.openExternal('mailto:anand@picfomo.com')">Contact</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="main-content">
+
+      <!-- ════ DASHBOARD TAB ════ -->
+      <section class="tab-panel active" id="panel-dashboard">
+        <div class="panel-header">
+          <div>
+            <h1>System Dashboard</h1>
+            <p class="panel-desc">Live performance metrics updating every 1.5 seconds</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn-primary" onclick="quickClean()">⚡ Quick Clean</button>
+          </div>
+        </div>
+
+        <!-- Live Gauges -->
+        <div class="gauges-grid">
+          <div class="gauge-card" id="gaugeCpu">
+            <div class="gauge-label">CPU</div>
+            <div class="gauge-ring-wrap">
+              <svg class="gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-bg" cx="60" cy="60" r="50" />
+                <circle class="gauge-fill" id="cpuRing" cx="60" cy="60" r="50"
+                  stroke-dasharray="314" stroke-dashoffset="314" />
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-value" id="cpuPct">0<span>%</span></div>
+              </div>
+            </div>
+            <div class="gauge-sub" id="cpuTemp">-- °C</div>
+          </div>
+
+          <div class="gauge-card" id="gaugeRam">
+            <div class="gauge-label">RAM</div>
+            <div class="gauge-ring-wrap">
+              <svg class="gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-bg" cx="60" cy="60" r="50" />
+                <circle class="gauge-fill" id="ramRing" cx="60" cy="60" r="50"
+                  stroke-dasharray="314" stroke-dashoffset="314" />
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-value" id="ramPct">0<span>%</span></div>
+              </div>
+            </div>
+            <div class="gauge-sub" id="ramDetail">-- / -- GB</div>
+          </div>
+
+          <div class="gauge-card" id="gaugeGpu">
+            <div class="gauge-label">GPU</div>
+            <div class="gauge-ring-wrap">
+              <svg class="gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-bg" cx="60" cy="60" r="50" />
+                <circle class="gauge-fill" id="gpuRing" cx="60" cy="60" r="50"
+                  stroke-dasharray="314" stroke-dashoffset="314" />
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-value" id="gpuPct">0<span>%</span></div>
+              </div>
+            </div>
+            <div class="gauge-sub">GPU Load</div>
+          </div>
+
+          <div class="gauge-card" id="gaugeDisk">
+            <div class="gauge-label">Disk I/O</div>
+            <div class="gauge-ring-wrap">
+              <svg class="gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-bg" cx="60" cy="60" r="50" />
+                <circle class="gauge-fill" id="diskRing" cx="60" cy="60" r="50"
+                  stroke="var(--cyan)" stroke-dasharray="314" stroke-dashoffset="251" />
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-value" id="diskRead" style="font-size:18px;">0</div>
+              </div>
+            </div>
+            <div class="gauge-sub" id="diskDetail">R: 0 | W: 0 MB/s</div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-chip">
+            <span class="chip-icon">🧠</span>
+            <div>
+              <div class="chip-label">RAM Free</div>
+              <div class="chip-value" id="ramFree">-- GB</div>
+            </div>
+          </div>
+          <div class="stat-chip">
+            <span class="chip-icon">🌡️</span>
+            <div>
+              <div class="chip-label">CPU Temp</div>
+              <div class="chip-value" id="cpuTempChip">-- °C</div>
+            </div>
+          </div>
+          <div class="stat-chip">
+            <span class="chip-icon">⚡</span>
+            <div>
+              <div class="chip-label">Cleaned Total</div>
+              <div class="chip-value" id="totalCleaned">0 MB</div>
+            </div>
+          </div>
+          <div class="stat-chip">
+            <span class="chip-icon">🔍</span>
+            <div>
+              <div class="chip-label">Bloat Detected</div>
+              <div class="chip-value" id="bloatCount">Scan needed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <h2>Quick Actions</h2>
+          <div class="action-cards">
+            <div class="action-card" onclick="switchTab('scan', document.querySelector('[data-tab=scan]'))">
+              <div class="ac-icon">🔍</div>
+              <div class="ac-title">Smart Scan</div>
+              <div class="ac-desc">Detect bloat running on this PC right now</div>
+            </div>
+            <div class="action-card" onclick="switchTab('cleaner', document.querySelector('[data-tab=cleaner]'))">
+              <div class="ac-icon">🧹</div>
+              <div class="ac-title">Deep Clean</div>
+              <div class="ac-desc">Delete GB of junk, temp files, browser caches</div>
+            </div>
+            <div class="action-card" onclick="switchTab('stream', document.querySelector('[data-tab=stream]'))">
+              <div class="ac-icon">🎮</div>
+              <div class="ac-title">Stream Mode</div>
+              <div class="ac-desc">Max performance for gaming & live streaming</div>
+            </div>
+            <div class="action-card" onclick="switchTab('startup', document.querySelector('[data-tab=startup]'))">
+              <div class="ac-icon">🚀</div>
+              <div class="ac-title">Startup Manager</div>
+              <div class="ac-desc">See what's really auto-loading on this PC</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════ SMART SCAN TAB ════ -->
+      <section class="tab-panel" id="panel-scan">
+        <div class="panel-header">
+          <div>
+            <h1>Smart Scan</h1>
+            <p class="panel-desc">Detects bloat actually running on <em>your</em> PC — not a generic list</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn-secondary" onclick="runScan()">🔍 Scan Now</button>
+            <button class="btn-danger-outline" id="killAllBtn" onclick="killAllBloat()" style="display:none;">💀 Kill All</button>
+          </div>
+        </div>
+
+        <div class="scan-state" id="scanState">
+          <div class="scan-idle">
+            <div class="scan-idle-icon">🔍</div>
+            <h3>Ready to Scan</h3>
+            <p>Click "Scan Now" to detect background processes wasting your RAM</p>
+            <button class="btn-primary" onclick="runScan()" style="margin-top:20px;">Start Smart Scan</button>
+          </div>
+        </div>
+        <div class="process-grid" id="processGrid" style="display:none;"></div>
+      </section>
+
+      <!-- ════ STARTUP TAB ════ -->
+      <section class="tab-panel" id="panel-startup">
+        <div class="panel-header">
+          <div>
+            <h1>Startup Manager</h1>
+            <p class="panel-desc">Apps auto-loading on <em>this</em> PC — read live from your Windows registry</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn-secondary" onclick="loadStartupItems()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="startup-state" id="startupState">
+          <div class="loading-state"><div class="spinner-lg"></div><p>Reading registry...</p></div>
+        </div>
+        <div class="startup-list" id="startupList" style="display:none;"></div>
+      </section>
+
+      <!-- ════ DEEP CLEANER TAB ════ -->
+      <section class="tab-panel" id="panel-cleaner">
+        <div class="panel-header">
+          <div>
+            <h1>Deep Cleaner</h1>
+            <p class="panel-desc">Safely remove GB of junk — see exactly what will be deleted before confirming</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn-secondary" onclick="scanJunk()">🔍 Scan for Junk</button>
+          </div>
+        </div>
+
+        <div class="cleaner-state" id="cleanerState">
+          <div class="scan-idle">
+            <div class="scan-idle-icon">🧹</div>
+            <h3>Ready to Scan</h3>
+            <p>Scan first to see what junk is on your PC — total size shown before anything is deleted</p>
+            <button class="btn-primary" onclick="scanJunk()" style="margin-top:20px;">Scan for Junk Files</button>
+          </div>
+        </div>
+        <div id="cleanerResults" style="display:none;">
+          <div class="cleaner-summary" id="cleanerSummary"></div>
+          <div class="cleaner-categories" id="cleanerCategories"></div>
+          <div class="cleaner-footer">
+            <button class="btn-primary btn-lg" onclick="cleanSelected()">🧹 Clean Selected</button>
+            <button class="btn-secondary" onclick="selectAllCategories(true)">Select All</button>
+            <button class="btn-secondary" onclick="selectAllCategories(false)">Deselect All</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════ SERVICES TAB ════ -->
+      <section class="tab-panel" id="panel-services">
+        <div class="panel-header">
+          <div>
+            <h1>Services Optimizer</h1>
+            <p class="panel-desc">Safe Windows service tweaks — every action is reversible</p>
+          </div>
+        </div>
+        <div class="services-list" id="servicesList"></div>
+      </section>
+
+      <!-- ════ STREAM MODE TAB ════ -->
+      <section class="tab-panel" id="panel-stream">
+        <div class="panel-header">
+          <div>
+            <h1>Stream & Gaming Mode</h1>
+            <p class="panel-desc">One-click maximum performance for streaming, gaming, or intensive work</p>
+          </div>
+        </div>
+
+        <div class="stream-hero" id="streamHero">
+          <div class="stream-status-display" id="streamDisplay">
+            <div class="stream-orb-wrap">
+              <div class="stream-orb idle" id="streamOrb"></div>
+            </div>
+            <h2 id="streamTitle">PC in Idle Mode</h2>
+            <p id="streamDesc">Enable Stream Mode to kill background bloat, max CPU performance, and prioritize your game/stream.</p>
+            <button class="btn-golive" id="streamToggle" onclick="toggleStreamMode()">
+              <span id="streamBtnIcon">🔴</span>
+              <span id="streamBtnText">GO LIVE</span>
+            </button>
+          </div>
+
+          <div class="stream-checklist">
+            <h3>What Stream Mode Does</h3>
+            <div class="checklist-item on">💀 Kill all detected background bloat</div>
+            <div class="checklist-item on">⚡ Switch CPU to High Performance (100%)</div>
+            <div class="checklist-item on">☁️ Pause OneDrive sync (no bandwidth waste)</div>
+            <div class="checklist-item on">🔍 Pause Windows Search indexing (no disk spikes)</div>
+            <div class="checklist-item on">🖨️ Stop Print Spooler (frees RAM)</div>
+            <div class="checklist-item on">🎮 Boost OBS process priority to AboveNormal</div>
+            <div class="checklist-item safe">✅ Protects: OBS, Roblox Studio, Node.js, Explorer</div>
+            <div class="checklist-item restore">🔄 All changes fully reversed on "End Stream"</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════ HISTORY TAB ════ -->
+      <section class="tab-panel" id="panel-history">
+        <div class="panel-header">
+          <div>
+            <h1>History & Undo</h1>
+            <p class="panel-desc">Full log of every action NexTune has taken — undo supported where possible</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn-secondary" onclick="loadHistory()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="loading-state"><div class="spinner-lg"></div><p>Loading history...</p></div>
+        </div>
+      </section>
+
+      <!-- ════ SETTINGS TAB ════ -->
+      <section class="tab-panel" id="panel-settings">
+        <div class="panel-header">
+          <div>
+            <h1>Settings</h1>
+            <p class="panel-desc">Configure NexTune behaviour</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3>Behaviour</h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Start minimized to tray</div>
+                <div class="setting-desc">NexTune opens directly to system tray on startup</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="settingStartMin" /><span class="toggle-track"></span></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Minimize to tray on close</div>
+                <div class="setting-desc">Closing window keeps NexTune running in background</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="settingTrayClose" checked /><span class="toggle-track"></span></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Desktop notifications</div>
+                <div class="setting-desc">Show tray notifications for important actions</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="settingNotifs" checked /><span class="toggle-track"></span></label>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Auto-Clean (AutoBot)</h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Auto-clean interval</div>
+                <div class="setting-desc">Kill background bloat automatically every N minutes</div>
+              </div>
+              <select class="setting-select" id="settingInterval">
+                <option value="0">Disabled</option>
+                <option value="15">Every 15 min</option>
+                <option value="30" selected>Every 30 min</option>
+                <option value="60">Every hour</option>
+              </select>
+            </div>
+            <div class="autobot-actions" style="margin-top:16px;display:flex;gap:10px;">
+              <button class="btn-primary" id="autobotInstallBtn" onclick="installAutoBot()">🤖 Install AutoBot</button>
+              <button class="btn-danger-outline" id="autobotRemoveBtn" onclick="uninstallAutoBot()" style="display:none;">Remove AutoBot</button>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Safety</h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Safe Mode</div>
+                <div class="setting-desc">Protects active work (Browsers, Meetings, Media) during optimization</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="settingSafeMode" checked /><span class="toggle-track"></span></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Create restore point before changes</div>
+                <div class="setting-desc">Recommended — creates a Windows Restore Point before destructive actions</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="settingRestore" checked /><span class="toggle-track"></span></label>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>About NexTune</h3>
+            <div class="about-info">
+              <div class="about-logo">⚡ NexTune</div>
+              <div class="about-version" id="aboutVersion">v1.0.0</div>
+              <div class="about-tagline">Intelligent PC Performance</div>
+              <div class="about-links">
+                <button class="link-btn" onclick="NexTune.openExternal('https://github.com/anandX1/nextune')">GitHub</button>
+                <button class="link-btn" onclick="NexTune.openExternal('mailto:anand@picfomo.com')">Contact Anand</button>
+                <button class="link-btn" onclick="NexTune.openExternal('https://github.com/anandX1/nextune/issues')">Report Issue</button>
+              </div>
+              <div class="about-legal">
+                Copyright © 2024–2025 Anand · MIT License<br/>
+                Zero telemetry. No data collected. Fully local.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-save">
+          <button class="btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ══ TOAST ══ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

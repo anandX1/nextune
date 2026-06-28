@@ -1,0 +1,105 @@
+END-USER LICENSE AGREEMENT (EULA) FOR NEXTUNE
+================================================
+
+Copyright (c) 2025-2026 Anand. All rights reserved.
+Author:  Anand
+Contact: anand@picfomo.com
+GitHub:  https://github.com/anandX1/nextune
+
+PLEASE READ THIS AGREEMENT CAREFULLY BEFORE INSTALLING OR USING NEXTUNE.
+By installing, copying, or otherwise using NexTune ("the Software"), you agree
+to be bound by the terms of this Agreement. If you do not agree, do not install
+or use the Software.
+
+1. GRANT OF LICENSE
+   Anand ("Author") grants you a non-exclusive, non-transferable, revocable
+   license to install and use NexTune on Windows computers you own or control,
+   solely for personal or internal business purposes.
+
+2. OPEN SOURCE
+   NexTune is released under the MIT License. Source code is available at
+   https://github.com/anandX1/nextune. You may view, fork, and contribute to
+   the source code under the terms of the MIT License.
+
+3. ADMINISTRATOR PRIVILEGES & SYSTEM CHANGES
+   NexTune requires administrator privileges to perform system optimization.
+   By granting administrator access, you authorize the Software to:
+   - Terminate background processes
+   - Modify Windows power plan settings
+   - Start and stop Windows services
+   - Read and write Windows Registry startup keys
+   - Delete temporary and cache files
+   - Create Windows System Restore Points
+   - Register scheduled tasks
+
+   All changes are logged in the History tab and can be undone where applicable.
+
+4. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED. THE AUTHOR MAKES NO WARRANTIES REGARDING MERCHANTABILITY, FITNESS
+   FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. USE OF THE SOFTWARE IS AT
+   YOUR SOLE RISK.
+
+5. LIMITATION OF LIABILITY
+   IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+   EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO
+   USE THE SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+   THE AUTHOR'S TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT PAID FOR THE SOFTWARE
+   (WHICH IS ZERO, AS NEXTUNE IS FREE).
+
+6. SYSTEM RESTORE RECOMMENDATION
+   NexTune recommends creating a Windows System Restore Point before making
+   significant system changes. This is offered automatically before destructive
+   operations. The Author is not responsible for system instability caused by
+   optimizations.
+
+7. DATA COLLECTION
+   NexTune collects NO personal data, usage telemetry, or analytics.
+   All data (settings, history, state) is stored locally on your machine only.
+   Nothing is sent to any server.
+
+8. UPDATES
+   NexTune may check for software updates via the GitHub Releases API
+   (https://api.github.com). This involves one HTTPS request containing only
+   your NexTune version number. No personal data is transmitted.
+
+9. TERMINATION
+   This license is effective until terminated. You may terminate it at any time
+   by uninstalling the Software. It terminates automatically if you breach any
+   term of this Agreement.
+
+10. GOVERNING LAW
+    This Agreement is governed by applicable law. Any disputes shall be resolved
+    by binding arbitration in accordance with applicable rules.
+
+11. CONTACT
+    For questions, support, or legal inquiries:
+    Email:  anand@picfomo.com
+    GitHub: https://github.com/anandX1/nextune/issues
+
+By clicking "I Agree" during installation, you acknowledge that you have read,
+understood, and agree to be bound by this Agreement.
+
+============================================================
+MIT LICENSE
+============================================================
+
+Copyright (c) 2025-2026 Anand
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -1,0 +1,472 @@
+{
+  "BlueStacksServices.exe": {
+    "name": "BlueStacks Services",
+    "vendor": "BlueStack Systems",
+    "category": "Android Emulator",
+    "impact": "critical",
+    "ramRange": "200-500",
+    "description": "Android emulator background daemon — wastes RAM even when not in use",
+    "safe_to_kill": true,
+    "tags": ["emulator", "android"]
+  },
+  "HD-Agent.exe": {
+    "name": "BlueStacks HD Agent",
+    "vendor": "BlueStack Systems",
+    "category": "Android Emulator",
+    "impact": "high",
+    "ramRange": "50-120",
+    "description": "BlueStacks hardware monitoring agent",
+    "safe_to_kill": true,
+    "tags": ["emulator", "android"]
+  },
+  "BstkSVC.exe": {
+    "name": "BlueStacks Service",
+    "vendor": "BlueStack Systems",
+    "category": "Android Emulator",
+    "impact": "high",
+    "ramRange": "40-80",
+    "description": "BlueStacks core service — runs 24/7 for no reason if not using it",
+    "safe_to_kill": true,
+    "tags": ["emulator", "android"]
+  },
+  "ms-teams.exe": {
+    "name": "Microsoft Teams",
+    "vendor": "Microsoft",
+    "category": "Communication",
+    "impact": "critical",
+    "ramRange": "300-700",
+    "description": "Microsoft Teams auto-launches at startup — one of the heaviest background apps on Windows",
+    "safe_to_kill": true,
+    "tags": ["microsoft", "communication", "autostart"]
+  },
+  "Teams.exe": {
+    "name": "Microsoft Teams (Classic)",
+    "vendor": "Microsoft",
+    "category": "Communication",
+    "impact": "critical",
+    "ramRange": "400-800",
+    "description": "Microsoft Teams classic version — extremely heavy RAM consumer",
+    "safe_to_kill": true,
+    "tags": ["microsoft", "communication"]
+  },
+  "AdobeCollabSync.exe": {
+    "name": "Adobe Collab Sync",
+    "vendor": "Adobe Inc.",
+    "category": "Cloud Sync",
+    "impact": "high",
+    "ramRange": "80-200",
+    "description": "Adobe document cloud sync — runs two instances (Acrobat + Reader). Zero value when not editing PDFs.",
+    "safe_to_kill": true,
+    "tags": ["adobe", "sync", "pdf"]
+  },
+  "AdobeUpdateService.exe": {
+    "name": "Adobe Update Service",
+    "vendor": "Adobe Inc.",
+    "category": "Updater",
+    "impact": "medium",
+    "ramRange": "30-80",
+    "description": "Adobe software updater — polls for updates in background",
+    "safe_to_kill": true,
+    "tags": ["adobe", "updater"]
+  },
+  "Creative Cloud.exe": {
+    "name": "Adobe Creative Cloud",
+    "vendor": "Adobe Inc.",
+    "category": "Cloud",
+    "impact": "high",
+    "ramRange": "150-350",
+    "description": "Creative Cloud background manager — loads even when not using any Adobe apps",
+    "safe_to_kill": true,
+    "tags": ["adobe", "cloud"]
+  },
+  "screenrec.exe": {
+    "name": "ScreenRec Agent",
+    "vendor": "StreamingVideoProvider",
+    "category": "Screen Recorder",
+    "impact": "high",
+    "ramRange": "60-150",
+    "description": "Background screen recorder — silently eating RAM. If you have OBS, you don't need this.",
+    "safe_to_kill": true,
+    "tags": ["recorder", "background"]
+  },
+  "figma_agent.exe": {
+    "name": "Figma Agent",
+    "vendor": "Figma Inc.",
+    "category": "Design Tool",
+    "impact": "medium",
+    "ramRange": "40-100",
+    "description": "Figma background helper for local fonts — runs 24/7 even when Figma is closed",
+    "safe_to_kill": true,
+    "tags": ["design", "figma", "background"]
+  },
+  "ArduinoCloudAgent.exe": {
+    "name": "Arduino Cloud Agent",
+    "vendor": "Arduino LLC",
+    "category": "IoT",
+    "impact": "medium",
+    "ramRange": "50-120",
+    "description": "Arduino IoT cloud sync — zero value unless actively doing Arduino projects",
+    "safe_to_kill": true,
+    "tags": ["iot", "arduino", "cloud"]
+  },
+  "UnInstDaemon.exe": {
+    "name": "BingWallpaper Daemon",
+    "vendor": "Microsoft",
+    "category": "Suspicious",
+    "impact": "critical",
+    "ramRange": "20-60",
+    "description": "Runs suspiciously from %TEMP% folder — no legitimate reason to run from temp. Highly suspicious.",
+    "safe_to_kill": true,
+    "tags": ["suspicious", "temp", "bing"]
+  },
+  "BingWallpaperEngine.exe": {
+    "name": "Bing Wallpaper Engine",
+    "vendor": "Microsoft",
+    "category": "Cosmetic",
+    "impact": "medium",
+    "ramRange": "30-80",
+    "description": "Downloads and sets Bing daily wallpaper — completely unnecessary background process",
+    "safe_to_kill": true,
+    "tags": ["microsoft", "wallpaper", "cosmetic"]
+  },
+  "Spotify.exe": {
+    "name": "Spotify (Background)",
+    "vendor": "Spotify AB",
+    "category": "Media",
+    "impact": "high",
+    "ramRange": "100-250",
+    "description": "Spotify auto-starts and stays in background using significant RAM",
+    "safe_to_kill": true,
+    "tags": ["media", "music", "autostart"]
+  },
+  "DiscordPTB.exe": {
+    "name": "Discord PTB",
+    "vendor": "Discord Inc.",
+    "category": "Communication",
+    "impact": "medium",
+    "ramRange": "100-300",
+    "description": "Discord Public Test Build — redundant if you have regular Discord",
+    "safe_to_kill": true,
+    "tags": ["discord", "communication", "duplicate"]
+  },
+  "EpicGamesLauncher.exe": {
+    "name": "Epic Games Launcher",
+    "vendor": "Epic Games",
+    "category": "Game Launcher",
+    "impact": "high",
+    "ramRange": "150-400",
+    "description": "Epic Games launcher auto-starts and stays in background — open it manually when gaming",
+    "safe_to_kill": true,
+    "tags": ["gaming", "launcher", "autostart"]
+  },
+  "steam.exe": {
+    "name": "Steam Client",
+    "vendor": "Valve Corporation",
+    "category": "Game Launcher",
+    "impact": "high",
+    "ramRange": "100-250",
+    "description": "Steam launches silently at Windows startup — open manually when you want to game",
+    "safe_to_kill": true,
+    "tags": ["gaming", "steam", "autostart"]
+  },
+  "GalaxyClient.exe": {
+    "name": "GOG Galaxy",
+    "vendor": "CD Projekt",
+    "category": "Game Launcher",
+    "impact": "medium",
+    "ramRange": "80-200",
+    "description": "GOG Galaxy launcher — runs background sync and notifications",
+    "safe_to_kill": true,
+    "tags": ["gaming", "gog", "launcher"]
+  },
+  "upc.exe": {
+    "name": "Ubisoft Connect",
+    "vendor": "Ubisoft",
+    "category": "Game Launcher",
+    "impact": "high",
+    "ramRange": "120-280",
+    "description": "Ubisoft Connect (formerly Uplay) — background gaming client",
+    "safe_to_kill": true,
+    "tags": ["gaming", "ubisoft", "launcher"]
+  },
+  "Origin.exe": {
+    "name": "EA Origin",
+    "vendor": "Electronic Arts",
+    "category": "Game Launcher",
+    "impact": "high",
+    "ramRange": "150-300",
+    "description": "EA Origin game launcher — auto-starts and runs background services",
+    "safe_to_kill": true,
+    "tags": ["gaming", "ea", "launcher"]
+  },
+  "EADesktop.exe": {
+    "name": "EA Desktop",
+    "vendor": "Electronic Arts",
+    "category": "Game Launcher",
+    "impact": "high",
+    "ramRange": "150-350",
+    "description": "EA's new desktop client — background process heavy",
+    "safe_to_kill": true,
+    "tags": ["gaming", "ea", "launcher"]
+  },
+  "NVDisplay.ContainerLocalSystem.exe": {
+    "name": "NVIDIA Display Container",
+    "vendor": "NVIDIA",
+    "category": "GPU Driver",
+    "impact": "low",
+    "ramRange": "20-50",
+    "description": "⚠️ NVIDIA GPU driver service — DO NOT KILL. Required for display and NVENC encoder.",
+    "safe_to_kill": false,
+    "tags": ["nvidia", "driver", "protected"]
+  },
+  "nvcontainer.exe": {
+    "name": "NVIDIA Container",
+    "vendor": "NVIDIA",
+    "category": "GPU Driver",
+    "impact": "low",
+    "ramRange": "30-80",
+    "description": "⚠️ NVIDIA Container process — part of GPU driver stack. Do not kill.",
+    "safe_to_kill": false,
+    "tags": ["nvidia", "driver", "protected"]
+  },
+  "OneDrive.exe": {
+    "name": "Microsoft OneDrive",
+    "vendor": "Microsoft",
+    "category": "Cloud Sync",
+    "impact": "medium",
+    "ramRange": "50-150",
+    "description": "OneDrive file sync — useful but consumes bandwidth. Pause during gaming/streaming.",
+    "safe_to_kill": true,
+    "tags": ["microsoft", "sync", "cloud"]
+  },
+  "DropboxUpdate.exe": {
+    "name": "Dropbox Updater",
+    "vendor": "Dropbox Inc.",
+    "category": "Updater",
+    "impact": "medium",
+    "ramRange": "30-80",
+    "description": "Dropbox background updater — runs even when Dropbox isn't actively syncing",
+    "safe_to_kill": true,
+    "tags": ["dropbox", "sync", "updater"]
+  },
+  "Slack.exe": {
+    "name": "Slack",
+    "vendor": "Salesforce",
+    "category": "Communication",
+    "impact": "high",
+    "ramRange": "200-500",
+    "description": "Slack Electron app — notoriously RAM-heavy, auto-starts and stays in background",
+    "safe_to_kill": true,
+    "tags": ["communication", "slack", "electron"]
+  },
+  "Zoom.exe": {
+    "name": "Zoom",
+    "vendor": "Zoom Video Communications",
+    "category": "Communication",
+    "impact": "medium",
+    "ramRange": "100-200",
+    "description": "Zoom video conferencing — loads background process even when not in a meeting",
+    "safe_to_kill": true,
+    "tags": ["communication", "video", "zoom"]
+  },
+  "webexmta.exe": {
+    "name": "Cisco Webex",
+    "vendor": "Cisco",
+    "category": "Communication",
+    "impact": "medium",
+    "ramRange": "80-180",
+    "description": "Cisco Webex background meeting agent",
+    "safe_to_kill": true,
+    "tags": ["communication", "cisco", "meetings"]
+  },
+  "Skype.exe": {
+    "name": "Skype",
+    "vendor": "Microsoft",
+    "category": "Communication",
+    "impact": "medium",
+    "ramRange": "80-200",
+    "description": "Skype — still auto-starts on many Windows installs even if not used",
+    "safe_to_kill": true,
+    "tags": ["communication", "microsoft", "voip"]
+  },
+  "chrome.exe": {
+    "name": "Chrome (Pre-loader)",
+    "vendor": "Google",
+    "category": "Browser",
+    "impact": "high",
+    "ramRange": "150-400",
+    "description": "Chrome pre-launch background process — uses /prefetch flag to load before you open it. Pure RAM waste.",
+    "safe_to_kill": true,
+    "tags": ["browser", "chrome", "google", "preloader"]
+  },
+  "msedge.exe": {
+    "name": "Microsoft Edge (Background)",
+    "vendor": "Microsoft",
+    "category": "Browser",
+    "impact": "medium",
+    "ramRange": "100-300",
+    "description": "Edge browser pre-loading in background via startup task",
+    "safe_to_kill": true,
+    "tags": ["browser", "edge", "microsoft", "preloader"]
+  },
+  "SearchApp.exe": {
+    "name": "Windows Search App",
+    "vendor": "Microsoft",
+    "category": "Windows",
+    "impact": "low",
+    "ramRange": "50-120",
+    "description": "Windows 10/11 search UI — part of OS, killing may cause search to be slow",
+    "safe_to_kill": false,
+    "tags": ["windows", "search", "system"]
+  },
+  "Cortana.exe": {
+    "name": "Cortana",
+    "vendor": "Microsoft",
+    "category": "Windows",
+    "impact": "medium",
+    "ramRange": "80-200",
+    "description": "Microsoft Cortana AI assistant — rarely used but runs in background. Safe to end task.",
+    "safe_to_kill": true,
+    "tags": ["windows", "cortana", "ai", "assistant"]
+  },
+  "GameBar.exe": {
+    "name": "Xbox Game Bar",
+    "vendor": "Microsoft",
+    "category": "Gaming",
+    "impact": "medium",
+    "ramRange": "50-150",
+    "description": "Xbox Game Bar overlay — useful for gaming overlay, but uses RAM when idle",
+    "safe_to_kill": true,
+    "tags": ["xbox", "gaming", "overlay"]
+  },
+  "iTunesHelper.exe": {
+    "name": "iTunes Helper",
+    "vendor": "Apple Inc.",
+    "category": "Device Sync",
+    "impact": "medium",
+    "ramRange": "30-80",
+    "description": "iTunes device detection daemon — waits for iPhone to connect. Kill if not using Apple devices.",
+    "safe_to_kill": true,
+    "tags": ["apple", "itunes", "helper"]
+  },
+  "AppleMobileDeviceService.exe": {
+    "name": "Apple Mobile Device Service",
+    "vendor": "Apple Inc.",
+    "category": "Device Sync",
+    "impact": "medium",
+    "ramRange": "40-100",
+    "description": "Apple device sync service — only needed when syncing iPhone/iPad",
+    "safe_to_kill": true,
+    "tags": ["apple", "ios", "sync", "service"]
+  },
+  "NortonSecurity.exe": {
+    "name": "Norton Security",
+    "vendor": "Gen Digital",
+    "category": "Antivirus",
+    "impact": "high",
+    "ramRange": "200-500",
+    "description": "Norton antivirus — Windows Defender provides equal protection for free. Norton is often bloatware.",
+    "safe_to_kill": false,
+    "tags": ["antivirus", "norton", "security"]
+  },
+  "McShield.exe": {
+    "name": "McAfee Shield",
+    "vendor": "McAfee",
+    "category": "Antivirus",
+    "impact": "high",
+    "ramRange": "200-600",
+    "description": "McAfee antivirus — widely considered bloatware. Windows Defender does the same job for free.",
+    "safe_to_kill": false,
+    "tags": ["antivirus", "mcafee", "security"]
+  },
+  "WmiPrvSE.exe": {
+    "name": "WMI Provider Host",
+    "vendor": "Microsoft",
+    "category": "Windows Core",
+    "impact": "low",
+    "ramRange": "variable",
+    "description": "⚠️ Windows Management Instrumentation — core Windows service. Do not kill.",
+    "safe_to_kill": false,
+    "tags": ["windows", "core", "protected"]
+  },
+  "svchost.exe": {
+    "name": "Service Host",
+    "vendor": "Microsoft",
+    "category": "Windows Core",
+    "impact": "low",
+    "ramRange": "variable",
+    "description": "⚠️ Windows service host — critical system process. Do NOT kill.",
+    "safe_to_kill": false,
+    "tags": ["windows", "core", "protected", "system"]
+  },
+  "SearchIndexer.exe": {
+    "name": "Windows Search Indexer",
+    "vendor": "Microsoft",
+    "category": "Windows",
+    "impact": "medium",
+    "ramRange": "80-300",
+    "description": "Search indexing service — causes disk I/O spikes that hurt recording/gaming. Can be paused.",
+    "safe_to_kill": true,
+    "tags": ["windows", "search", "disk"]
+  },
+  "spoolsv.exe": {
+    "name": "Print Spooler",
+    "vendor": "Microsoft",
+    "category": "Windows",
+    "impact": "low",
+    "ramRange": "10-40",
+    "description": "Manages print queue — wastes memory if you have no printer. Set to Manual.",
+    "safe_to_kill": true,
+    "tags": ["windows", "printer", "spooler"]
+  },
+  "WinStore.App.exe": {
+    "name": "Microsoft Store",
+    "vendor": "Microsoft",
+    "category": "Windows",
+    "impact": "medium",
+    "ramRange": "80-200",
+    "description": "Microsoft Store background process — can be closed when not actively downloading apps",
+    "safe_to_kill": true,
+    "tags": ["windows", "store", "microsoft"]
+  },
+  "RobloxPlayerBeta.exe": {
+    "name": "Roblox Player",
+    "vendor": "Roblox Corporation",
+    "category": "Gaming",
+    "impact": "medium",
+    "ramRange": "200-400",
+    "description": "Roblox Player — if launched to tray without actively playing, can be closed",
+    "safe_to_kill": true,
+    "tags": ["roblox", "gaming"]
+  },
+  "obs64.exe": {
+    "name": "OBS Studio",
+    "vendor": "OBS Project",
+    "category": "Streaming",
+    "impact": "low",
+    "ramRange": "200-500",
+    "description": "⚠️ OBS Studio — your streaming software. DO NOT kill while streaming.",
+    "safe_to_kill": false,
+    "tags": ["obs", "streaming", "protected"]
+  },
+  "obs.exe": {
+    "name": "OBS Studio (32-bit)",
+    "vendor": "OBS Project",
+    "category": "Streaming",
+    "impact": "low",
+    "ramRange": "200-500",
+    "description": "⚠️ OBS Studio — your streaming software. DO NOT kill while streaming.",
+    "safe_to_kill": false,
+    "tags": ["obs", "streaming", "protected"]
+  },
+  "node.exe": {
+    "name": "Node.js",
+    "vendor": "Node.js Foundation",
+    "category": "Development",
+    "impact": "low",
+    "ramRange": "variable",
+    "description": "⚠️ Node.js runtime — may be running MCP servers or local tools. Check before killing.",
+    "safe_to_kill": false,
+    "tags": ["nodejs", "development", "protected"]
+  }
+}
